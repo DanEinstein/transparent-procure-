@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    font-family: 'Inter', sans-serif;
+  }
+}
+
+@layer utilities {
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #374151;
+    border-radius: 10px;
+  }
+
+  .geometric-bg {
+    background-color: #0a0e1a;
+    background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuCSfaEobPlvXqenFQY10e6wjPuNmBZDilT70cb4nmekrCWADlQBUkQDJLm6m3vRShl5aswv1yy4qrDTzwkL8Wa1DcKHBRc6aM9gzsJGJNXN8GffP9ocajj3iI8XEUP15X0NUeiEuhQxeprmth9GHZCW708FPbf8HsQwToax6ARVY44w8V5CFM1AySIW24-wPeH0Z9CmfZ-0ZW3Yis8Ghj3qVfGKugpVp10yzggb9FhfGSOOyEYv4eaKf9JYH1DYvbc3fB8Ot_o_GM8);
+    background-blend-mode: overlay;
+  }
+}
