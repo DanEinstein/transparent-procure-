@@ -1,0 +1,82 @@
+[
+  {
+    "id": "post_101",
+    "title": "Nairobi Classrooms Abandoned",
+    "content": "The site for the 4-classroom block has been completely abandoned. We haven't seen a contractor here in over 4 months. Weeds are growing over the foundation.",
+    "status": "delay_reported",
+    "wardId": "Nairobi Central Ward",
+    "county": "Nairobi",
+    "category": "Infrastructure",
+    "likes": 84,
+    "comments": 15,
+    "referenceId": "NRB-120",
+    "author": {
+      "name": "Cyrus Kibet",
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Cyrus",
+      "verified": true
+    },
+    "timestamp": "2026-02-26T10:00:00Z",
+    "images": ["https://images.unsplash.com/photo-1541888946425-d81bb19240f5"],
+    "is_demo_data": true
+  },
+  {
+    "id": "post_102",
+    "title": "Kiambu Hospital Extension Halted",
+    "content": "Despite the massive 35M budget allocation, work on the hospital ward extension has stopped. Security guard says workers haven't been paid.",
+    "status": "delay_reported",
+    "wardId": "Kiambu Urban",
+    "county": "Kiambu",
+    "category": "Health",
+    "likes": 156,
+    "comments": 32,
+    "referenceId": "KJB-909",
+    "author": {
+      "name": "Alice Wanjiru",
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Alice",
+      "verified": true
+    },
+    "timestamp": "2026-02-25T14:30:00Z",
+    "images": ["https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d"],
+    "is_demo_data": true
+  },
+  {
+    "id": "post_103",
+    "title": "Otonglo-Riat Road Progress",
+    "content": "Great to see the tarmac finally being laid down today. The contractor seems to be moving fast. Traffic is a bit heavy due to diversions.",
+    "status": "on_schedule",
+    "wardId": "Otonglo Ward",
+    "county": "Kisumu",
+    "category": "Infrastructure",
+    "likes": 45,
+    "comments": 3,
+    "referenceId": "KSM-089",
+    "author": {
+      "name": "Omondi Otieno",
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Omondi",
+      "verified": false
+    },
+    "timestamp": "2026-02-26T08:15:00Z",
+    "images": ["https://images.unsplash.com/photo-1515162816999-a0c47dc192f7"],
+    "is_demo_data": true
+  },
+  {
+    "id": "post_104",
+    "title": "Malaba Road Bridge Crisis",
+    "content": "The bridge construction has completely stalled. With the rains starting, it's becoming highly dangerous for school children to cross the river.",
+    "status": "delay_reported",
+    "wardId": "Malaba Central",
+    "county": "Bungoma",
+    "category": "Infrastructure",
+    "likes": 210,
+    "comments": 45,
+    "referenceId": "BGS-882",
+    "author": {
+      "name": "Sarah Nekesa",
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah",
+      "verified": true
+    },
+    "timestamp": "2026-02-24T11:45:00Z",
+    "images": ["https://images.unsplash.com/photo-1545558014-8692077e9b5c"],
+    "is_demo_data": true
+  }
+]
