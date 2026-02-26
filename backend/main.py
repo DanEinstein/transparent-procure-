@@ -1,17 +1,14 @@
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Optional, List
-import uuid
-from datetime import datetime
 
-# Import the data loader service and whistle-blower service.
-from services.data_loader import get_all_tenders, get_all_payments, load_json
-from services.whistleblower import save_report
+# Import your data loader logic
+from services.data_loader import load_json
 
 app = FastAPI(title="TransparentProcure API - MVP")
 
-# Set up CORS middleware 
-# This allows your React frontend (localhost:5173) to communicate with this API
+# --- INFRASTRUCTURE CONFIG (CORS) ---
+# Allows your React frontend (port 5173) to fetch data
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173"],
@@ -20,77 +17,60 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# --- TENDERS & SEARCH 
+# --- API ROUTER SETUP ---
+# This adds the "/api" prefix expected by the Frontend apiService.js
+api_router = APIRouter(prefix="/api")
 
-@app.get("/tenders")
-async def read_tenders(
-    county: Optional[str] = None, 
-    category: Optional[str] = None,
-    page: int = 1,
-    limit: int = 10
-):
+@api_router.get("/tenders")
+async def read_tenders():
     """
-    Returns a filtered, paginated list of tenders. [cite: 38, 57]
+    Returns the list of contractors for the Registry page.
+    Note: We are mapping contractors to this endpoint to sync with the 
+    current Frontend Registry component.
     """
-    tenders = get_all_tenders()
+    try:
+        data = load_json("tender.json")
+        return data
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Infrastructure Error: {str(e)}")
     
-    if county:
-        tenders = [t for t in tenders if t.get("county").lower() == county.lower()]
-    if category:
-        tenders = [t for t in tenders if t.get("category").lower() == category.lower()]
-        
-    # Simple pagination logic
-    start = (page - 1) * limit
-    end = start + limit
-    return tenders[start:end]
-
-@app.get("/tender/{id}")
-async def read_tender(id: str):
+@api_router.get("/contractors")
+async def read_contractors():
     """
-    Returns full details for a specific tender. [cite: 38, 57]
+    Registry Page Data Source.
+    Loads contractors.json for the entity list.
     """
-    tenders = get_all_tenders()
-    tender = next((t for t in tenders if t["id"] == id), None)
-    
-    if not tender:
-        raise HTTPException(status_code=404, detail="Tender not found")
-    return tender
+    return load_json("contractors.json")
 
-# --- COUNTIES & ENTITIES
+@api_router.get("/payments")
+async def read_payments():
+    """
+    Returns financial history records.
+    """
+    return load_json("payment.json")
 
-@app.get("/counties")
+@api_router.get("/counties")
 async def read_counties():
     """
-    Returns all 47 counties with tender counts and total values. [cite: 43, 57]
+    Day 2 Aggregation: Calculates stats per county from the tender data.
     """
-    tenders = get_all_tenders()
+    tenders = load_json("tender.json")
     stats = {}
     for t in tenders:
-        c_name = t.get("county")
+        c_name = t.get("county", "Unknown")
         if c_name not in stats:
             stats[c_name] = {"name": c_name, "tender_count": 0, "total_value": 0}
         stats[c_name]["tender_count"] += 1
         stats[c_name]["total_value"] += t.get("value", 0)
-    
     return list(stats.values())
 
-# --- WHISTLE-BLOWER
+# --- INCLUDE ROUTES ---
+app.include_router(api_router)
 
-@app.post("/whistle-blower")
-async def create_report(report: dict):
-    """
-    Accepts anonymous reports. Returns a reference number. [cite: 57]
-    No PII is stored. [cite: 48]
-    """
-    if not report.get("project_ref") or not report.get("description"):
-        raise HTTPException(status_code=400, detail="Description and Project Ref are required")
-    
-    result = save_report(report)
-    if result:
-        return result
-    raise HTTPException(status_code=500, detail="Internal storage error")
-
-# --- HEALTH CHECK ---
 @app.get("/")
 async def root():
-    return {"message": "TransparentProcure API is live", "version": "0.1.0-MVP"}
+    return {
+        "message": "TransparentProcure Backend is Live",
+        "env": "Development",
+        "port": 3001
+    }
