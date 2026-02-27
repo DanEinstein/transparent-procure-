@@ -3,19 +3,35 @@ import { useState, useEffect } from 'react';
 export default function Audit() {
     const [tenders, setTenders] = useState([]);
     const [loading, setLoading] = useState(true);
+    // 1. ADD STATE FOR THE FILTER
+    const [countyFilter, setCountyFilter] = useState(""); 
+    const [availableCounties, setAvailableCounties] = useState([]);
 
     useEffect(() => {
-        fetch(`${import.meta.env.VITE_API_BASE_URL}/tenders`)
+        setLoading(true);
+        // 2. DYNAMIC URL: Append the query parameter if a county is selected
+        const baseUrl = `${import.meta.env.VITE_API_BASE_URL}/tenders`;
+        const fetchUrl = countyFilter ? `${baseUrl}?county=${encodeURIComponent(countyFilter)}` : baseUrl;
+
+        fetch(fetchUrl)
             .then(res => res.json())
             .then(data => {
-                setTenders(data);
+                const parsedData = Array.isArray(data) ? data : (data?.data || []);
+                setTenders(parsedData);
+                
+                // Extract unique counties for the dropdown (only on initial load when fetching all)
+                if (!countyFilter && parsedData.length > 0) {
+                    const uniqueCounties = [...new Set(parsedData.map(t => t.county).filter(Boolean))].sort();
+                    setAvailableCounties(uniqueCounties);
+                }
+                
                 setLoading(false);
             })
             .catch(err => {
                 console.error("Infrastructure Sync Error:", err);
                 setLoading(false);
             });
-    }, []);
+    }, [countyFilter]); // Re-run fetch whenever the filter changes
 
     const getProgress = (status) => {
         const s = status?.toLowerCase() || '';
@@ -36,9 +52,26 @@ export default function Audit() {
                 <div className="bg-surface-dark border border-slate-800 p-5 rounded-xl shadow-lg">
                     <p className="text-slate-400 text-sm mb-1 font-medium italic">Audit Risk Alert</p>
                     <h3 className="text-2xl font-bold text-rose-500 tracking-tighter">
-                        {/* Server-side check for is_critical or client-side math fallback */}
                         {tenders.filter(t => t.is_critical || (Number(t.value) / (Number(t.benchmark_value) || 1)) > 1.5).length} Flagged
                     </h3>
+                </div>
+            </div>
+
+            {/* NEW: Filter Controls */}
+            <div className="flex justify-between items-end mb-4">
+                <h3 className="text-sm font-black uppercase tracking-widest text-white">Project Registry</h3>
+                <div className="flex items-center gap-3">
+                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Filter by County:</label>
+                    <select 
+                        className="bg-slate-900 border border-slate-700 text-white text-xs font-bold py-2 px-4 rounded-lg focus:outline-none focus:border-primary transition-colors cursor-pointer"
+                        value={countyFilter}
+                        onChange={(e) => setCountyFilter(e.target.value)}
+                    >
+                        <option value="">ALL COUNTIES</option>
+                        {availableCounties.map(county => (
+                            <option key={county} value={county}>{county.toUpperCase()}</option>
+                        ))}
+                    </select>
                 </div>
             </div>
 
@@ -55,17 +88,13 @@ export default function Audit() {
                     </thead>
                     <tbody className="divide-y divide-slate-800">
                         {loading ? (
-                            <tr><td colSpan="4" className="text-center py-20 text-slate-500 font-mono text-xs uppercase tracking-widest">Syncing with JSON Infrastructure...</td></tr>
+                            <tr><td colSpan="4" className="text-center py-20 text-slate-500 font-mono text-xs uppercase tracking-widest">Filtering Infrastructure...</td></tr>
+                        ) : tenders.length === 0 ? (
+                            <tr><td colSpan="4" className="text-center py-20 text-slate-500 font-bold">No projects found for this county.</td></tr>
                         ) : tenders.map((tender) => {
-                            // --- DATA MAPPING DEFENSE ---
-                            // 1. Title Defense: Check all possible keys
                             const projectTitle = tender.title || tender.name || tender.project_name || "Untitled Project";
-                            
-                            // 2. Numerical Defense: Ensure we have numbers to avoid NaN
                             const val = Number(tender.value) || 0;
                             const bench = Number(tender.benchmark_value) || 1;
-                            
-                            // 3. Variance Logic: If value is 0, show 0% instead of -100%
                             const varianceRaw = val > 0 ? ((val / bench - 1) * 100) : 0;
                             const variance = Math.abs(varianceRaw).toFixed(0);
                             const sign = varianceRaw > 0 ? "+" : (varianceRaw < 0 ? "-" : "");
@@ -80,6 +109,9 @@ export default function Audit() {
                                             <p className="text-[10px] text-slate-500 mt-1 uppercase tracking-wider font-medium">
                                                 {tender.county || "Unknown County"} | {tender.category || "General"}
                                             </p>
+                                            {tender.is_demo_data && (
+                                                <span className="mt-1 w-max px-1.5 py-0.5 rounded text-[8px] font-black uppercase bg-primary/20 text-primary border border-primary/30">DEMO DATA</span>
+                                            )}
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">

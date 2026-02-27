@@ -4,7 +4,7 @@ import uuid
 from datetime import datetime
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-LOG_FILE = os.path.join(BASE_DIR, "data", "whistle_blower_log.json")
+LOG_FILE = os.path.join(BASE_DIR, "data", "whistle_blower_logs.json")
 
 def save_report(report_data: dict):
     """

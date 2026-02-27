@@ -20,48 +20,66 @@ app.add_middleware(
 api_router = APIRouter(prefix="/api")
 
 @api_router.get("/tenders")
-async def read_tenders():
+async def read_tenders(
+    skip: int = Query(0, description="Pagination offset"),
+    limit: int = Query(100, description="Pagination limit"),
+    county: Optional[str] = Query(None, description="Filter by county name"),
+    category: Optional[str] = Query(None, description="Filter by procurement category"),
+    status: Optional[str] = Query(None, description="Filter by project status")
+):
     """
-    Audit Page Data Source. 
-    Standardizes keys and cross-references citizen reports to flag risks.
+    Paginated list with filtering by county, category, and status.
     """
     tenders = load_json("tender.json") 
-    posts = load_json("posts.json") # Bring in the citizen data
     
-    # 1. Create a fast lookup set of project IDs that citizens have flagged
-    delayed_refs = {
-        p.get("referenceId") for p in posts 
-        if p.get("status") == "delay_reported" and p.get("referenceId")
-    }
+    # 1. Apply Filters
+    if county:
+        tenders = [t for t in tenders if t.get("county", "").lower() == county.lower()]
+    if category:
+        tenders = [t for t in tenders if t.get("category", "").lower() == category.lower()]
+    if status:
+        tenders = [t for t in tenders if t.get("status", "").lower() == status.lower()]
 
+    # 2. Standardize data and apply risk flags
     for t in tenders:
         t["title"] = t.get("title") or t.get("name") or "Untitled Project"
+        # Enforce DEMO DATA label globally
+        t["is_demo_data"] = True 
+        
         val = t.get("value", 0)
         bench = t.get("benchmark_value", 1)
-        t_id = t.get("id") # The project ID to match against posts
         
-        risk_flags = []
-        
-        # 2. Government Data Risk: Financial Anomaly
         if (val / bench) > 1.5:
-            risk_flags.append("Price Anomaly")
-            
-        # 3. Citizen Oversight Risk: Delay Reported
-        if t_id and t_id in delayed_refs:
-            risk_flags.append("Citizen Flag")
-            
-        # 4. Apply the combined flags
-        if risk_flags:
-            # Joins multiple flags, e.g., "Price Anomaly + Citizen Flag"
-            t["risk_flag"] = " + ".join(risk_flags) 
+            t["risk_flag"] = "High Price Anomaly"
             t["is_critical"] = True
         else:
             t["is_critical"] = False
-            # Ensure we clear any old flags
-            if "risk_flag" in t:
-                del t["risk_flag"]
+
+    # 3. Apply Pagination
+    paginated_tenders = tenders[skip : skip + limit]
+    
+    # Return paginated wrapper
+    return {
+        "total": len(tenders),
+        "skip": skip,
+        "limit": limit,
+        "data": paginated_tenders
+    }
+
+@api_router.get("/tender/{tender_id}")
+async def get_tender(tender_id: str):
+    """
+    Full tender detail including awarded contractor, value, and site location.
+    """
+    tenders = load_json("tender.json")
+    for t in tenders:
+        if t.get("id") == tender_id:
+            # Enforce demo data flag
+            t["is_demo_data"] = True
+            # In a real app, you would join contractor details here
+            return t
             
-    return tenders
+    raise HTTPException(status_code=404, detail=f"Tender {tender_id} not found")
 # --- UPDATED COMMUNITY FEED LOGIC ---
 @api_router.get("/posts")
 async def read_posts(wardId: Optional[str] = Query(None)):
@@ -111,8 +129,25 @@ async def read_contractors():
     return contractors
 
 @api_router.get("/payments")
-async def read_payments():
-    return load_json("payment.json")
+async def read_payments(county: Optional[str] = Query(None)):
+    """
+    Day 4: Payment records exposing Chronic Pending bills.
+    Adapted for the pre-calculated payment.json schema.
+    """
+    payments = load_json("payment.json") # using your exact filename
+    
+    # Filter by checking if the search term is IN the entity_name
+    if county:
+        payments = [p for p in payments if county.lower() in p.get("entity_name", "").lower()]
+
+    for p in payments:
+        # Fulfilling the requirement: Flag any pending > 180 days
+        if p.get("status") == "Pending" and p.get("days_outstanding", 0) > 180:
+            p["risk_flag"] = "Chronic Pending"
+        else:
+            p["risk_flag"] = None
+
+    return {"data": payments}
 
 @api_router.get("/counties")
 async def read_counties():

@@ -1,37 +1,53 @@
 def calculate_county_reputation(tenders, payments, posts, county_name):
     """
-    Day 3 Logic: Dynamically calculates a 0-100 score for a county.
-    Upgraded to include Citizen Oversight penalties.
+    Calculates a 0-100 score for a county based on project success AND payment reliability.
     """
     score = 100
-    county_tenders = [t for t in tenders if t.get("county") == county_name]
     
-    if not county_tenders:
-        return 100 # High trust for clean slates
-        
-    # Create a fast lookup for projects with citizen-reported delays
-    delayed_refs = {
-        p.get("referenceId") for p in posts 
-        if p.get("status") == "delay_reported"
-    }
+    # --- 1. PROJECT PENALTIES (Your Existing Logic) ---
+    county_tenders = [t for t in tenders if t.get("county") == county_name]
+    delayed_refs = {p.get("referenceId") for p in posts if p.get("status") == "delay_reported"}
     
     for project in county_tenders:
-        # 1. Penalty for official stalled projects (Your existing logic)
         if project.get("status") == "Stalled":
-            score -= 20
-        
-        # 2. Penalty for extreme price anomalies (Your existing logic)
+            score -= 10
         val = project.get("value", 0)
         bench = project.get("benchmark_value", 1)
         if (val / bench) > 1.5:
             score -= 15
-            
-        # 3. NEW: Penalty for crowdsourced citizen flags
         if project.get("id") in delayed_refs:
             score -= 10
-            
-    return max(0, min(100, score))
 
+    # --- 2. PAYMENT REPUTATION ALGORITHM ---
+    # Match "Mombasa" to "Mombasa County Government"
+    county_payments = [p for p in payments if county_name.lower() in p.get("entity_name", "").lower()]
+    
+    if not county_payments:
+        return max(0, min(100, int(score)))
+
+    total_invoices = len(county_payments)
+    
+    # Calculate how many were paid "on time" (e.g., within 60 days)
+    on_time_count = len([
+        p for p in county_payments 
+        if p.get("status") == "Paid" and p.get("days_outstanding", 0) <= 60
+    ])
+    
+    # Count how many are dangerously late
+    chronic_count = len([
+        p for p in county_payments 
+        if p.get("status") == "Pending" and p.get("days_outstanding", 0) > 180
+    ])
+                
+    # Metric A: % Paid on time
+    on_time_percentage = (on_time_count / total_invoices) * 100
+    if on_time_percentage < 50:
+        score -= 15 # Penalty if they pay late more than half the time
+        
+    # Metric B: Chronic Pending Bills 
+    score -= (chronic_count * 10) # 10 point deduction for EVERY chronic invoice
+            
+    return max(0, min(100, int(score)))
 
 def calculate_contractor_score(tenders, posts, contractor_id):
     """
