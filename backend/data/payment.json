@@ -1,0 +1,25 @@
+[
+    { "invoice_id": "INV-MSA-000", "entity_id": "COUNTY-MSA", "entity_name": "Mombasa County Government", "amount": 2100000000, "status": "Pending", "days_outstanding": 200, "is_chronic": true, "is_demo_data": true},
+    { "invoice_id": "INV-MSA-001", "entity_id": "COUNTY-KSM", "entity_name": "Kisumu County Government", "amount": 45000000,"status": "Paid", "days_outstanding": 45, "is_chronic": false, "is_demo_data": true},
+    { "invoice_id": "INV-MSA-002", "entity_id": "COUNTY-MSA", "entity_name": "Mombasa County Government", "amount": 2100000000, "status": "Pending", "days_outstanding": 387, "is_chronic": true, "is_demo_data": true },
+    { "invoice_id": "INV-MSA-003", "entity_id": "COUNTY-MSA", "entity_name": "Mombasa County Government", "amount": 450000000, "status": "Pending", "days_outstanding": 210, "is_chronic": true, "is_demo_data": true },
+    { "invoice_id": "INV-MSA-004", "entity_id": "COUNTY-MSA", "entity_name": "Mombasa County Government", "amount": 12000000, "status": "Paid", "days_outstanding": 420, "is_chronic": false, "is_demo_data": true },
+    { "invoice_id": "INV-KSM-101", "entity_id": "COUNTY-KSM", "entity_name": "Kisumu County Government", "amount": 45000000, "status": "Paid", "days_outstanding": 45, "is_chronic": false, "is_demo_data": true },
+    { "invoice_id": "INV-KSM-102", "entity_id": "COUNTY-KSM", "entity_name": "Kisumu County Government", "amount": 8000000, "status": "Pending", "days_outstanding": 12, "is_chronic": false, "is_demo_data": true },
+    { "invoice_id": "INV-NRB-201", "entity_id": "COUNTY-NRB", "entity_name": "Nairobi City County", "amount": 150000000, "status": "Pending", "days_outstanding": 190, "is_chronic": true, "is_demo_data": true },
+    { "invoice_id": "INV-NRB-202", "entity_id": "COUNTY-NRB", "entity_name": "Nairobi City County", "amount": 30000000, "status": "Paid", "days_outstanding": 88, "is_chronic": false, "is_demo_data": true },
+    { "invoice_id": "INV-MKN-301", "entity_id": "COUNTY-MKN", "entity_name": "Makueni County Government", "amount": 5000000, "status": "Paid", "days_outstanding": 28, "is_chronic": false, "is_demo_data": true },
+    { "invoice_id": "INV-MKN-302", "entity_id": "COUNTY-MKN", "entity_name": "Makueni County Government", "amount": 12000000, "status": "Paid", "days_outstanding": 32, "is_chronic": false, "is_demo_data": true },
+    { "invoice_id": "INV-KWL-401", "entity_id": "COUNTY-KWL", "entity_name": "Kwale County Government", "amount": 3500000, "status": "Pending", "days_outstanding": 55, "is_chronic": false, "is_demo_data": true },
+    { "invoice_id": "INV-KWL-402", "entity_id": "COUNTY-KWL", "entity_name": "Kwale County Government", "amount": 1800000, "status": "Paid", "days_outstanding": 40, "is_chronic": false, "is_demo_data": true },
+    { "invoice_id": "INV-KCH-501", "entity_id": "COUNTY-KCH", "entity_name": "Kericho County Government", "amount": 1200000, "status": "Paid", "days_outstanding": 15, "is_chronic": false, "is_demo_data": true },
+    { "invoice_id": "INV-NRY-601", "entity_id": "COUNTY-NRY", "entity_name": "Nyeri County Government", "amount": 5400000, "status": "Paid", "days_outstanding": 60, "is_chronic": false, "is_demo_data": true },
+    { "invoice_id": "INV-TRK-701", "entity_id": "COUNTY-TRK", "entity_name": "Turkana County Government", "amount": 9000000, "status": "Pending", "days_outstanding": 240, "is_chronic": true, "is_demo_data": true },
+    { "invoice_id": "INV-KISI-801", "entity_id": "COUNTY-KISI", "entity_name": "Kisii County Government", "amount": 18500000, "status": "Paid", "days_outstanding": 95, "is_chronic": false, "is_demo_data": true },
+    { "invoice_id": "INV-NKU-901", "entity_id": "COUNTY-NKU", "entity_name": "Nakuru County Government", "amount": 4100000, "status": "Paid", "days_outstanding": 48, "is_chronic": false, "is_demo_data": true },
+    { "invoice_id": "INV-KIL-011", "entity_id": "COUNTY-KIL", "entity_name": "Kilifi County Government", "amount": 12000000, "status": "Pending", "days_outstanding": 130, "is_chronic": false, "is_demo_data": true },
+    { "invoice_id": "INV-KIL-012", "entity_id": "COUNTY-KIL", "entity_name": "Kilifi County Government", "amount": 2500000, "status": "Paid", "days_outstanding": 75, "is_chronic": false, "is_demo_data": true },
+    { "invoice_id": "INV-MIN-HLT", "entity_id": "MIN-HEALTH", "entity_name": "Ministry of Health", "amount": 500000000, "status": "Pending", "days_outstanding": 305, "is_chronic": true, "is_demo_data": true },
+    { "invoice_id": "INV-MIN-EDU", "entity_id": "MIN-EDU", "entity_name": "Ministry of Education", "amount": 120000000, "status": "Paid", "days_outstanding": 50, "is_chronic": false, "is_demo_data": true }
+
+]
