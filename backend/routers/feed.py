@@ -5,7 +5,7 @@ from typing import Optional
 
 from fastapi import APIRouter, Query
 from pydantic import BaseModel
-from services.data_loader import load_mock_data
+from services.data_loader import load_mock_data, get_all_posts
 from utils.response import success_response, paginated_response
 
 router = APIRouter(prefix="/feed", tags=["feed"])
@@ -28,8 +28,15 @@ class CreatePostRequest(BaseModel):
 
 @router.get("/ward/{ward_id}")
 async def get_ward_feed(ward_id: str):
-    posts = load_mock_data("feedPosts")
-    filtered = [p for p in posts if ward_id.lower() in p.get("ward", "").lower()]
+    # Merge both data sources
+    citizen_posts = get_all_posts()
+    mock_posts = load_mock_data("feedPosts")
+    all_posts = citizen_posts + mock_posts
+    filtered = [
+        p for p in all_posts
+        if ward_id.lower() in p.get("ward", "").lower()
+        or ward_id.lower() in p.get("wardId", "").lower()
+    ]
     return success_response(data=filtered, message="Ward feed retrieved")
 
 
@@ -40,10 +47,22 @@ async def get_posts(
     page: int = Query(1, ge=1),
     limit: int = Query(10, ge=1, le=100),
 ):
-    posts = load_mock_data("feedPosts")
+    # Merge citizen posts (posts.json) with mock feed posts
+    citizen_posts = get_all_posts()
+    mock_posts = load_mock_data("feedPosts")
+    posts = citizen_posts + mock_posts
 
-    if wardId:
-        posts = [p for p in posts if p.get("ward") == wardId]
+    if wardId and wardId not in ("All Activities", ""):
+        posts = [
+            p for p in posts
+            if p.get("ward") == wardId
+            or p.get("wardId") == wardId
+            or (p.get("county") and p.get("county") in wardId)
+            or p.get("category") == wardId
+        ]
+
+    if category:
+        posts = [p for p in posts if p.get("category", "").lower() == category.lower()]
 
     total = len(posts)
     start = (page - 1) * limit

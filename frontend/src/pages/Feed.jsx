@@ -1,27 +1,23 @@
 import { useState, useEffect } from 'react';
+import { feedAPI } from '../api/apiService';
 
 export default function Feed() {
     const [wardFilter, setWardFilter] = useState('All Activities');
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    // DIRECT FETCH APPROACH (Bypassing useApi wrapper)
     useEffect(() => {
         setLoading(true);
-        
-        // Construct the URL with the query parameter if needed
-        const url = wardFilter === 'All Activities' 
-            ? `${import.meta.env.VITE_API_BASE_URL}/posts`
-            : `${import.meta.env.VITE_API_BASE_URL}/posts?wardId=${encodeURIComponent(wardFilter)}`;
+        const params = wardFilter === 'All Activities' ? {} : { wardId: wardFilter };
 
-        fetch(url)
-            .then(res => res.json())
-            .then(data => {
-                // DEFENSIVE PARSING: Handle the data whether it's flat or nested
+        feedAPI.getPosts(params)
+            .then(res => {
+                const data = res.data;
+                // DEFENSIVE PARSING: Handle flat array or nested envelope
                 if (Array.isArray(data)) {
-                    setPosts(data); // If backend returns flat list
+                    setPosts(data);
                 } else if (data?.data?.posts) {
-                    setPosts(data.data.posts); // If backend returns nested dict
+                    setPosts(data.data.posts);
                 } else {
                     console.warn("Unexpected data format:", data);
                     setPosts([]);
@@ -32,7 +28,7 @@ export default function Feed() {
                 console.error("Feed Sync Error:", err);
                 setLoading(false);
             });
-    }, [wardFilter]); // Re-runs every time you click a filter button
+    }, [wardFilter]);
 
     // Utility to calculate dynamic stats for the sidebar
     const stats = {
@@ -40,7 +36,7 @@ export default function Feed() {
         atRisk: posts.filter(p => p.status === 'delay_reported').length,
         total: posts.length
     };
-    
+
     if (loading) {
         return (
             <div className="flex-1 overflow-y-auto p-8 flex items-center justify-center bg-background-dark">
@@ -51,11 +47,11 @@ export default function Feed() {
             </div>
         );
     }
-    
+
     return (
         <div className="flex-1 overflow-y-auto p-8 custom-scrollbar bg-background-dark text-slate-200">
             <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
-                
+
                 {/* Left: Feed Content */}
                 <div className="xl:col-span-8 flex flex-col gap-6">
                     {/* Dynamic Header */}
@@ -72,13 +68,12 @@ export default function Feed() {
                         {/* Filter Logic: These buttons now update the wardFilter state */}
                         <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 scrollbar-hide">
                             {['All Activities', 'Nairobi Central Ward', 'Infrastructure', 'Health'].map((filter) => (
-                                <button 
+                                <button
                                     key={filter}
-                                    className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-tighter transition-all duration-300 ${
-                                        wardFilter === filter 
-                                        ? 'bg-primary text-white shadow-[0_0_15px_rgba(17,82,212,0.4)]' 
-                                        : 'bg-slate-800/50 text-slate-400 hover:bg-slate-700'
-                                    }`}
+                                    className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-tighter transition-all duration-300 ${wardFilter === filter
+                                            ? 'bg-primary text-white shadow-[0_0_15px_rgba(17,82,212,0.4)]'
+                                            : 'bg-slate-800/50 text-slate-400 hover:bg-slate-700'
+                                        }`}
                                     onClick={() => setWardFilter(filter)}
                                 >
                                     {filter}
@@ -109,18 +104,17 @@ export default function Feed() {
                                                 </p>
                                             </div>
                                         </div>
-                                        <div className={`px-2.5 py-1 text-[9px] font-black uppercase rounded-full border ${
-                                            post.status === 'on_schedule' 
-                                            ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' 
-                                            : 'bg-amber-500/10 text-amber-500 border-amber-500/20'
-                                        }`}>
+                                        <div className={`px-2.5 py-1 text-[9px] font-black uppercase rounded-full border ${post.status === 'on_schedule'
+                                                ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'
+                                                : 'bg-amber-500/10 text-amber-500 border-amber-500/20'
+                                            }`}>
                                             {post.status?.replace('_', ' ')}
                                         </div>
                                     </div>
                                     <div className="p-5">
                                         <h3 className="text-lg font-bold text-white mb-2 group-hover:text-primary transition-colors">{post.title}</h3>
                                         <p className="text-sm text-slate-400 leading-relaxed mb-4">{post.content}</p>
-                                        
+
                                         {post.images?.length > 0 && (
                                             <div className="grid grid-cols-2 gap-3 mb-4">
                                                 {post.images.slice(0, 2).map((image, idx) => (
