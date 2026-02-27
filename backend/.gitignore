@@ -1,0 +1,43 @@
+# ── Python bytecode ──────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+*.pyo
+
+# ── Virtual environment ──────────────────────────────────────────
+venv/
+.venv/
+env/
+ENV/
+
+# ── Environment / secrets ────────────────────────────────────────
+.env
+.env.*
+!.env.example
+
+# ── Runtime / log files ──────────────────────────────────────────
+*.log
+logs/
+
+# ── Generated / writeable data (keep mock_data, ignore live logs) ─
+data/whistle_blower_logs.json
+
+# ── Uploads ──────────────────────────────────────────────────────
+uploads/
+media/
+
+# ── OS files ─────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── Editor / IDE ─────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ── Distribution / packaging ─────────────────────────────────────
+dist/
+build/
+*.egg-info/

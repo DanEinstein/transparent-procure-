@@ -1,76 +1,70 @@
-from fastapi import FastAPI, HTTPException, APIRouter
+"""
+TransparentProcure API — Main Entry Point
+==========================================
+
+Run with:
+    uvicorn main:app --port 3001 --reload
+
+The frontend (Vite on port 5173) auto-detects this backend
+by pinging GET /api/health.
+
+Backend team notes:
+- All endpoints return the standard response envelope:
+    { success, statusCode, message, data, timestamp }
+- Mock data lives in data/mock_data.json
+- Each router file is clearly marked with TODO comments
+    where you'll replace mock logic with real DB queries.
+"""
+
+import uvicorn
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from typing import Optional, List
 
-# Import your data loader logic
-from services.data_loader import load_json
+# --- Router imports ---
+from routers import health, auth, dashboard, feed, registry, fraud, audit, reports
+from routers import utils as utils_router
 
-app = FastAPI(title="TransparentProcure API - MVP")
+# --- App setup ---
+app = FastAPI(
+    title="TransparentProcure API",
+    description="Government procurement transparency platform — Kenya",
+    version="2.0.0",
+)
 
-# --- INFRASTRUCTURE CONFIG (CORS) ---
-# Allows your React frontend (port 5173) to fetch data
+# --- CORS — allow the React frontend ---
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=[
+        "http://localhost:5173",   # Vite dev server
+        "http://127.0.0.1:5173",
+        "http://localhost:3000",   # possible alternative
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# --- API ROUTER SETUP ---
-# This adds the "/api" prefix expected by the Frontend apiService.js
-api_router = APIRouter(prefix="/api")
+# --- Include all routers under /api ---
+app.include_router(health.router,     prefix="/api")
+app.include_router(auth.router,       prefix="/api")
+app.include_router(dashboard.router,  prefix="/api")
+app.include_router(feed.router,       prefix="/api")
+app.include_router(registry.router,   prefix="/api")
+app.include_router(fraud.router,      prefix="/api")
+app.include_router(audit.router,      prefix="/api")
+app.include_router(reports.router,    prefix="/api")
+app.include_router(utils_router.router, prefix="/api")
 
-@api_router.get("/tenders")
-async def read_tenders():
-    """
-    Returns the list of contractors for the Registry page.
-    Note: We are mapping contractors to this endpoint to sync with the 
-    current Frontend Registry component.
-    """
-    try:
-        data = load_json("tender.json")
-        return data
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Infrastructure Error: {str(e)}")
-    
-@api_router.get("/contractors")
-async def read_contractors():
-    """
-    Registry Page Data Source.
-    Loads contractors.json for the entity list.
-    """
-    return load_json("contractors.json")
-
-@api_router.get("/payments")
-async def read_payments():
-    """
-    Returns financial history records.
-    """
-    return load_json("payment.json")
-
-@api_router.get("/counties")
-async def read_counties():
-    """
-    Day 2 Aggregation: Calculates stats per county from the tender data.
-    """
-    tenders = load_json("tender.json")
-    stats = {}
-    for t in tenders:
-        c_name = t.get("county", "Unknown")
-        if c_name not in stats:
-            stats[c_name] = {"name": c_name, "tender_count": 0, "total_value": 0}
-        stats[c_name]["tender_count"] += 1
-        stats[c_name]["total_value"] += t.get("value", 0)
-    return list(stats.values())
-
-# --- INCLUDE ROUTES ---
-app.include_router(api_router)
 
 @app.get("/")
 async def root():
     return {
         "message": "TransparentProcure Backend is Live",
-        "env": "Development",
-        "port": 3001
+        "version": "2.0.0",
+        "docs": "/docs",
+        "health": "/api/health",
     }
+
+
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="0.0.0.0", port=3001, reload=True)

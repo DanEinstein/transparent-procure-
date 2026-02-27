@@ -1,40 +1,7 @@
 import axios from 'axios';
-import mockAPI from './mockService';
 
-// Base API configuration
+// Base API configuration — always points to real backend
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api';
-
-// Check if backend is available by attempting to reach the API
-const isBackendAvailable = async () => {
-  if (import.meta.env.VITE_USE_MOCK_API === 'true') {
-    return false; // Force use of mock API
-  }
-
-  try {
-    // Attempt to reach the API with a timeout
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 second timeout
-
-    const response = await fetch(`${API_BASE_URL}/health`, {
-      method: 'GET',
-      signal: controller.signal
-    });
-
-    clearTimeout(timeoutId);
-    return response.ok;
-  } catch (error) {
-    console.warn('Backend not available, using mock API:', error.message);
-    return false;
-  }
-};
-
-let backendAvailable = false;
-
-// Initialize the availability check
-isBackendAvailable().then(available => {
-  backendAvailable = available;
-  console.log(`Using ${available ? 'real' : 'mock'} API service`);
-});
 
 // Create axios instance with defaults
 const apiClient = axios.create({
@@ -73,540 +40,183 @@ apiClient.interceptors.response.use(
   }
 );
 
-// Function to determine whether to use real API or mock API
-const useRealAPI = () => {
-  return backendAvailable && import.meta.env.VITE_USE_MOCK_API !== 'true';
-};
-
 // Auth API endpoints
 export const authAPI = {
   login: async (credentials) => {
-    if (useRealAPI()) {
-      return apiClient.post('/auth/login', credentials);
-    } else {
-      return mockAPI.auth.login(credentials);
-    }
+    return apiClient.post('/auth/login', credentials);
   },
   logout: async () => {
-    if (useRealAPI()) {
-      return apiClient.post('/auth/logout');
-    } else {
-      return mockAPI.auth.logout();
-    }
+    return apiClient.post('/auth/logout');
   },
   register: async (userData) => {
-    if (useRealAPI()) {
-      return apiClient.post('/auth/register', userData);
-    } else {
-      // Mock API doesn't have register endpoint yet, return error
-      return {
-        success: false,
-        statusCode: 404,
-        message: 'Register endpoint not implemented in mock API',
-        timestamp: new Date().toISOString()
-      };
-    }
+    return apiClient.post('/auth/register', userData);
   },
   refreshToken: async () => {
-    if (useRealAPI()) {
-      return apiClient.post('/auth/refresh');
-    } else {
-      // Mock API doesn't have refresh endpoint, return error
-      return {
-        success: false,
-        statusCode: 404,
-        message: 'Refresh endpoint not implemented in mock API',
-        timestamp: new Date().toISOString()
-      };
-    }
+    return apiClient.post('/auth/refresh');
   },
   getCurrentUser: async () => {
-    if (useRealAPI()) {
-      return apiClient.get('/auth/me');
-    } else {
-      return mockAPI.auth.getCurrentUser();
-    }
+    return apiClient.get('/auth/me');
   },
 };
 
 // Dashboard API endpoints
 export const dashboardAPI = {
   getStats: async () => {
-    if (useRealAPI()) {
-      return apiClient.get('/dashboard/stats');
-    } else {
-      return mockAPI.dashboard.getStats();
-    }
+    return apiClient.get('/dashboard/stats');
   },
   getContractorScores: async () => {
-    if (useRealAPI()) {
-      return apiClient.get('/dashboard/contractor-scores');
-    } else {
-      return mockAPI.dashboard.getContractorScores();
-    }
+    return apiClient.get('/dashboard/contractor-scores');
   },
   getAnomalies: async () => {
-    if (useRealAPI()) {
-      return apiClient.get('/dashboard/anomalies');
-    } else {
-      return mockAPI.dashboard.getAnomalies();
-    }
+    return apiClient.get('/dashboard/anomalies');
   },
   getRecentActivities: async () => {
-    if (useRealAPI()) {
-      return apiClient.get('/dashboard/recent-activities');
-    } else {
-      return mockAPI.dashboard.getRecentActivities();
-    }
+    return apiClient.get('/dashboard/recent-activities');
   },
   getWardFeed: async () => {
-    if (useRealAPI()) {
-      return apiClient.get('/dashboard/ward-feed');
-    } else {
-      return mockAPI.dashboard.getWardFeed();
-    }
+    return apiClient.get('/dashboard/ward-feed');
   },
 };
 
 // Feed API endpoints
 export const feedAPI = {
   getWardFeed: async (wardId) => {
-    if (useRealAPI()) {
-      return apiClient.get(`/feed/ward/${wardId}`);
-    } else {
-      return mockAPI.feed.getWardFeed(wardId);
-    }
+    return apiClient.get(`/feed/ward/${wardId}`);
   },
   getPosts: async (params) => {
-    if (useRealAPI()) {
-      return apiClient.get('/feed/posts', { params });
-    } else {
-      return mockAPI.feed.getPosts(params);
-    }
+    return apiClient.get('/feed/posts', { params });
   },
   createPost: async (postData) => {
-    if (useRealAPI()) {
-      return apiClient.post('/feed/posts', postData);
-    } else {
-      return mockAPI.feed.createPost(postData);
-    }
+    return apiClient.post('/feed/posts', postData);
   },
   updatePost: (postId, postData) => {
-    if (useRealAPI()) {
-      return apiClient.put(`/feed/posts/${postId}`, postData);
-    } else {
-      // Mock API doesn't have update endpoint, return error
-      return Promise.resolve({
-        success: false,
-        statusCode: 404,
-        message: 'Update post endpoint not implemented in mock API',
-        timestamp: new Date().toISOString()
-      });
-    }
+    return apiClient.put(`/feed/posts/${postId}`, postData);
   },
   deletePost: (postId) => {
-    if (useRealAPI()) {
-      return apiClient.delete(`/feed/posts/${postId}`);
-    } else {
-      // Mock API doesn't have delete endpoint, return error
-      return Promise.resolve({
-        success: false,
-        statusCode: 404,
-        message: 'Delete post endpoint not implemented in mock API',
-        timestamp: new Date().toISOString()
-      });
-    }
+    return apiClient.delete(`/feed/posts/${postId}`);
   },
   likePost: (postId) => {
-    if (useRealAPI()) {
-      return apiClient.post(`/feed/posts/${postId}/like`);
-    } else {
-      // Mock API doesn't have like endpoint, return error
-      return Promise.resolve({
-        success: false,
-        statusCode: 404,
-        message: 'Like post endpoint not implemented in mock API',
-        timestamp: new Date().toISOString()
-      });
-    }
+    return apiClient.post(`/feed/posts/${postId}/like`);
   },
   commentOnPost: (postId, commentData) => {
-    if (useRealAPI()) {
-      return apiClient.post(`/feed/posts/${postId}/comments`, commentData);
-    } else {
-      // Mock API doesn't have comment endpoint, return error
-      return Promise.resolve({
-        success: false,
-        statusCode: 404,
-        message: 'Comment on post endpoint not implemented in mock API',
-        timestamp: new Date().toISOString()
-      });
-    }
+    return apiClient.post(`/feed/posts/${postId}/comments`, commentData);
   },
 };
 
 // Registry API endpoints
 export const registryAPI = {
   getContractors: async (params) => {
-    if (useRealAPI()) {
-      return apiClient.get('/registry/contractors', { params });
-    } else {
-      return mockAPI.registry.getContractors(params);
-    }
+    return apiClient.get('/registry/contractors', { params });
   },
   getContractorDetails: async (contractorId) => {
-    if (useRealAPI()) {
-      return apiClient.get(`/registry/contractors/${contractorId}`);
-    } else {
-      return mockAPI.registry.getContractorDetails(contractorId);
-    }
+    return apiClient.get(`/registry/contractors/${contractorId}`);
   },
   createContractor: async (contractorData) => {
-    if (useRealAPI()) {
-      return apiClient.post('/registry/contractors', contractorData);
-    } else {
-      return mockAPI.registry.createContractor(contractorData);
-    }
+    return apiClient.post('/registry/contractors', contractorData);
   },
   updateContractor: (contractorId, contractorData) => {
-    if (useRealAPI()) {
-      return apiClient.put(`/registry/contractors/${contractorId}`, contractorData);
-    } else {
-      // Mock API doesn't have update endpoint, return error
-      return Promise.resolve({
-        success: false,
-        statusCode: 404,
-        message: 'Update contractor endpoint not implemented in mock API',
-        timestamp: new Date().toISOString()
-      });
-    }
+    return apiClient.put(`/registry/contractors/${contractorId}`, contractorData);
   },
   deleteContractor: (contractorId) => {
-    if (useRealAPI()) {
-      return apiClient.delete(`/registry/contractors/${contractorId}`);
-    } else {
-      // Mock API doesn't have delete endpoint, return error
-      return Promise.resolve({
-        success: false,
-        statusCode: 404,
-        message: 'Delete contractor endpoint not implemented in mock API',
-        timestamp: new Date().toISOString()
-      });
-    }
+    return apiClient.delete(`/registry/contractors/${contractorId}`);
   },
   blacklistContractor: (contractorId, reason) => {
-    if (useRealAPI()) {
-      return apiClient.post(`/registry/contractors/${contractorId}/blacklist`, { reason });
-    } else {
-      // Mock API doesn't have blacklist endpoint, return error
-      return Promise.resolve({
-        success: false,
-        statusCode: 404,
-        message: 'Blacklist contractor endpoint not implemented in mock API',
-        timestamp: new Date().toISOString()
-      });
-    }
+    return apiClient.post(`/registry/contractors/${contractorId}/blacklist`, { reason });
   },
   getBlacklistedContractors: () => {
-    if (useRealAPI()) {
-      return apiClient.get('/registry/blacklisted');
-    } else {
-      // Mock API doesn't have this endpoint yet, return empty list
-      return Promise.resolve({
-        success: true,
-        statusCode: 200,
-        message: 'Blacklisted contractors retrieved',
-        data: [],
-        timestamp: new Date().toISOString()
-      });
-    }
+    return apiClient.get('/registry/blacklisted');
   },
 };
 
 // Fraud Monitoring API endpoints
 export const fraudAPI = {
   getAlerts: async (params) => {
-    if (useRealAPI()) {
-      return apiClient.get('/fraud/alerts', { params });
-    } else {
-      return mockAPI.fraud.getAlerts(params);
-    }
+    return apiClient.get('/fraud/alerts', { params });
   },
   getAlertDetails: async (alertId) => {
-    if (useRealAPI()) {
-      return apiClient.get(`/fraud/alerts/${alertId}`);
-    } else {
-      return mockAPI.fraud.getAlertDetails(alertId);
-    }
+    return apiClient.get(`/fraud/alerts/${alertId}`);
   },
   createAlert: (alertData) => {
-    if (useRealAPI()) {
-      return apiClient.post('/fraud/alerts', alertData);
-    } else {
-      // Mock API doesn't have create alert endpoint, return error
-      return Promise.resolve({
-        success: false,
-        statusCode: 404,
-        message: 'Create fraud alert endpoint not implemented in mock API',
-        timestamp: new Date().toISOString()
-      });
-    }
+    return apiClient.post('/fraud/alerts', alertData);
   },
   updateAlert: (alertId, alertData) => {
-    if (useRealAPI()) {
-      return apiClient.put(`/fraud/alerts/${alertId}`, alertData);
-    } else {
-      // Mock API doesn't have update endpoint, return error
-      return Promise.resolve({
-        success: false,
-        statusCode: 404,
-        message: 'Update fraud alert endpoint not implemented in mock API',
-        timestamp: new Date().toISOString()
-      });
-    }
+    return apiClient.put(`/fraud/alerts/${alertId}`, alertData);
   },
   resolveAlert: (alertId) => {
-    if (useRealAPI()) {
-      return apiClient.patch(`/fraud/alerts/${alertId}/resolve`);
-    } else {
-      // Mock API doesn't have resolve endpoint, return error
-      return Promise.resolve({
-        success: false,
-        statusCode: 404,
-        message: 'Resolve fraud alert endpoint not implemented in mock API',
-        timestamp: new Date().toISOString()
-      });
-    }
+    return apiClient.patch(`/fraud/alerts/${alertId}/resolve`);
   },
   getPatterns: () => {
-    if (useRealAPI()) {
-      return apiClient.get('/fraud/patterns');
-    } else {
-      // Mock API doesn't have this endpoint, return empty list
-      return Promise.resolve({
-        success: true,
-        statusCode: 200,
-        message: 'Fraud patterns retrieved',
-        data: [],
-        timestamp: new Date().toISOString()
-      });
-    }
+    return apiClient.get('/fraud/patterns');
   },
   getRiskAssessment: (tenderId) => {
-    if (useRealAPI()) {
-      return apiClient.get(`/fraud/risk-assessment/${tenderId}`);
-    } else {
-      // Mock API doesn't have this endpoint, return mock data
-      return Promise.resolve({
-        success: true,
-        statusCode: 200,
-        message: 'Risk assessment retrieved',
-        data: {
-          riskLevel: 'medium',
-          score: 65,
-          factors: [
-            { factor: 'Bid history', weight: 30, impact: 'medium' },
-            { factor: 'Financial capacity', weight: 25, impact: 'low' },
-            { factor: 'Compliance record', weight: 45, impact: 'high' }
-          ],
-          recommendations: ['Monitor closely', 'Verify documentation']
-        },
-        timestamp: new Date().toISOString()
-      });
-    }
+    return apiClient.get(`/fraud/risk-assessment/${tenderId}`);
   },
 };
 
 // Audit API endpoints
 export const auditAPI = {
   getAudits: async (params) => {
-    if (useRealAPI()) {
-      return apiClient.get('/audit/audits', { params });
-    } else {
-      return mockAPI.audit.getAudits(params);
-    }
+    return apiClient.get('/audit/audits', { params });
   },
   getAuditDetails: (auditId) => {
-    if (useRealAPI()) {
-      return apiClient.get(`/audit/audits/${auditId}`);
-    } else {
-      // Mock API doesn't have this endpoint, return error
-      return Promise.resolve({
-        success: false,
-        statusCode: 404,
-        message: 'Get audit details endpoint not implemented in mock API',
-        timestamp: new Date().toISOString()
-      });
-    }
+    return apiClient.get(`/audit/audits/${auditId}`);
   },
   createAudit: (auditData) => {
-    if (useRealAPI()) {
-      return apiClient.post('/audit/audits', auditData);
-    } else {
-      // Mock API doesn't have this endpoint, return error
-      return Promise.resolve({
-        success: false,
-        statusCode: 404,
-        message: 'Create audit endpoint not implemented in mock API',
-        timestamp: new Date().toISOString()
-      });
-    }
+    return apiClient.post('/audit/audits', auditData);
   },
   updateAudit: (auditId, auditData) => {
-    if (useRealAPI()) {
-      return apiClient.put(`/audit/audits/${auditId}`, auditData);
-    } else {
-      // Mock API doesn't have this endpoint, return error
-      return Promise.resolve({
-        success: false,
-        statusCode: 404,
-        message: 'Update audit endpoint not implemented in mock API',
-        timestamp: new Date().toISOString()
-      });
-    }
+    return apiClient.put(`/audit/audits/${auditId}`, auditData);
   },
   getAuditTrail: (entityType, entityId) => {
-    if (useRealAPI()) {
-      return apiClient.get(`/audit/trail/${entityType}/${entityId}`);
-    } else {
-      // Mock API doesn't have this endpoint, return error
-      return Promise.resolve({
-        success: false,
-        statusCode: 404,
-        message: 'Get audit trail endpoint not implemented in mock API',
-        timestamp: new Date().toISOString()
-      });
-    }
+    return apiClient.get(`/audit/trail/${entityType}/${entityId}`);
   },
   exportAuditReport: (params) => {
-    if (useRealAPI()) {
-      return apiClient.get('/audit/export', { params });
-    } else {
-      // Mock API doesn't have this endpoint, return error
-      return Promise.resolve({
-        success: false,
-        statusCode: 404,
-        message: 'Export audit report endpoint not implemented in mock API',
-        timestamp: new Date().toISOString()
-      });
-    }
+    return apiClient.get('/audit/export', { params });
   },
 };
 
 // Reports API endpoints
 export const reportsAPI = {
   getReports: async (params) => {
-    if (useRealAPI()) {
-      return apiClient.get('/reports', { params });
-    } else {
-      return mockAPI.reports.getReports(params);
-    }
+    return apiClient.get('/reports', { params });
   },
   getReportDetails: (reportId) => {
-    if (useRealAPI()) {
-      return apiClient.get(`/reports/${reportId}`);
-    } else {
-      // Mock API doesn't have this endpoint, return error
-      return Promise.resolve({
-        success: false,
-        statusCode: 404,
-        message: 'Get report details endpoint not implemented in mock API',
-        timestamp: new Date().toISOString()
-      });
-    }
+    return apiClient.get(`/reports/${reportId}`);
   },
   generateReport: (reportData) => {
-    if (useRealAPI()) {
-      return apiClient.post('/reports/generate', reportData);
-    } else {
-      // Mock API doesn't have this endpoint, return error
-      return Promise.resolve({
-        success: false,
-        statusCode: 404,
-        message: 'Generate report endpoint not implemented in mock API',
-        timestamp: new Date().toISOString()
-      });
-    }
+    return apiClient.post('/reports/generate', reportData);
   },
   exportReport: (reportId, format) => {
-    if (useRealAPI()) {
-      return apiClient.get(`/reports/${reportId}/export`, {
-        params: { format },
-        responseType: 'blob'
-      });
-    } else {
-      // Mock API doesn't have this endpoint, return error
-      return Promise.resolve({
-        success: false,
-        statusCode: 404,
-        message: 'Export report endpoint not implemented in mock API',
-        timestamp: new Date().toISOString()
-      });
-    }
+    return apiClient.get(`/reports/${reportId}/export`, {
+      params: { format },
+      responseType: 'blob'
+    });
   },
   getReportTemplates: () => {
-    if (useRealAPI()) {
-      return apiClient.get('/reports/templates');
-    } else {
-      // Mock API doesn't have this endpoint, return error
-      return Promise.resolve({
-        success: false,
-        statusCode: 404,
-        message: 'Get report templates endpoint not implemented in mock API',
-        timestamp: new Date().toISOString()
-      });
-    }
+    return apiClient.get('/reports/templates');
   },
 };
 
 // Utility API endpoints
 export const utilsAPI = {
   uploadFile: (file, folder) => {
-    if (useRealAPI()) {
-      const formData = new FormData();
-      formData.append('file', file);
-      if (folder) formData.append('folder', folder);
-      return apiClient.post('/utils/upload', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-    } else {
-      // Mock API doesn't have file upload, return mock response
-      return Promise.resolve({
-        success: true,
-        statusCode: 200,
-        message: 'File uploaded successfully',
-        data: {
-          url: URL.createObjectURL(file),
-          filename: file.name,
-          size: file.size,
-          type: file.type
-        },
-        timestamp: new Date().toISOString()
-      });
-    }
+    const formData = new FormData();
+    formData.append('file', file);
+    if (folder) formData.append('folder', folder);
+    return apiClient.post('/utils/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
   },
   search: async (query, filters) => {
-    if (useRealAPI()) {
-      return apiClient.get('/utils/search', { params: { q: query, ...filters } });
-    } else {
-      return mockAPI.utils.search(query, filters);
-    }
+    return apiClient.get('/utils/search', { params: { q: query, ...filters } });
   },
   getWardList: async () => {
-    if (useRealAPI()) {
-      return apiClient.get('/utils/wards');
-    } else {
-      return mockAPI.utils.getWardList();
-    }
+    return apiClient.get('/utils/wards');
   },
   getCountyList: async () => {
-    if (useRealAPI()) {
-      return apiClient.get('/utils/counties');
-    } else {
-      return mockAPI.utils.getCountyList();
-    }
+    return apiClient.get('/utils/counties');
   },
 };
 
