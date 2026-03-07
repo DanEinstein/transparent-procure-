@@ -1,9 +1,10 @@
+import sqlite3
 import json
 import os
 import re
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DATA_PATH = os.path.join(BASE_DIR, "data")
+DB_PATH = os.path.join(BASE_DIR, "transparent_procure.db")
 
 def clean_numerical_value(value):
     """
@@ -20,38 +21,66 @@ def clean_numerical_value(value):
     return 0.0
 
 def load_json(filename: str):
-    path = os.path.join(DATA_PATH, filename)
-    if not os.path.exists(path):
+    """
+    Mock function to maintain compatibility with existing codebase.
+    Translates filename requests to database queries.
+    """
+    if not os.path.exists(DB_PATH):
         return []
-    
-    with open(path, "r") as f:
-        try:
-            data = json.load(f)
-            if not isinstance(data, list):
-                return data
 
-            for item in data:
-                if isinstance(item, dict):
-                    # Requirement: Global label for all mock data
-                    item["is_demo_data"] = True
-                    
-                    # --- CONDITIONAL CLEANING (The Improvement) ---
-                    # Only clean if the keys exist to avoid corrupting 
-                    # non-financial files like posts.json or contractors.json
-                    if 'value' in item:
-                        item['value'] = clean_numerical_value(item['value'])
-                    
-                    if 'benchmark_value' in item:
-                        item['benchmark_value'] = clean_numerical_value(item['benchmark_value'])
-                    else:
-                        # Only set a default benchmark if 'value' exists 
-                        # This prevents adding 'benchmark_value: 1' to social posts
-                        if 'value' in item:
-                            item['benchmark_value'] = 1.0
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
 
-            return data
-        except json.JSONDecodeError:
-            return []
+    result = []
+    try:
+        if "tender" in filename:
+            cursor.execute("SELECT * FROM tenders")
+            rows = cursor.fetchall()
+            for r in rows:
+                t = dict(r)
+                t['is_demo_data'] = bool(t['is_demo_data'])
+                if t.get('days_overdue') is None:
+                    t.pop('days_overdue', None)
+                if t.get('description') is None:
+                    t.pop('description', None)
+                result.append(t)
+        elif "contractors" in filename:
+            cursor.execute("SELECT * FROM contractors")
+            rows = cursor.fetchall()
+            for r in rows:
+                c = dict(r)
+                c['directors'] = json.loads(c['directors']) if c.get('directors') else []
+                c['risk_flags'] = json.loads(c['risk_flags']) if c.get('risk_flags') else []
+                c['is_demo_data'] = bool(c['is_demo_data'])
+                result.append(c)
+        elif "posts" in filename:
+            cursor.execute("SELECT * FROM posts")
+            rows = cursor.fetchall()
+            for r in rows:
+                p = dict(r)
+                p['images'] = json.loads(p['images']) if p.get('images') else []
+                p['is_demo_data'] = bool(p['is_demo_data'])
+                p['author'] = {
+                    "name": p.pop('author_name', None),
+                    "avatar": p.pop('author_avatar', None),
+                    "verified": bool(p.pop('author_verified', False))
+                }
+                result.append(p)
+        elif "payment" in filename:
+            cursor.execute("SELECT * FROM payments")
+            rows = cursor.fetchall()
+            for r in rows:
+                p = dict(r)
+                p['is_chronic'] = bool(p['is_chronic'])
+                p['is_demo_data'] = bool(p['is_demo_data'])
+                result.append(p)
+    except sqlite3.Error as e:
+        print(f"Database error: {e}")
+    finally:
+        conn.close()
+
+    return result
 
 # Existing functions remain untouched to preserve Day 1/2 stability
 def get_all_tenders():
