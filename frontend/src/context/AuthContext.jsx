@@ -30,7 +30,8 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       const response = await authAPI.getCurrentUser();
-      setUser(response.data.user);
+      const payload = response.data?.data || response.data;
+      setUser(payload.user || payload);
       setIsAuthenticated(true);
     } catch (error) {
       console.error('Failed to verify authentication:', error);
@@ -43,20 +44,21 @@ export const AuthProvider = ({ children }) => {
   const login = async (credentials) => {
     try {
       const response = await authAPI.login(credentials);
-      const { user, token } = response.data;
-      
+      const payload = response.data?.data || response.data;
+      const { user, token } = payload;
+
       localStorage.setItem('authToken', token);
       localStorage.setItem('user', JSON.stringify(user));
-      
+
       setUser(user);
       setIsAuthenticated(true);
-      
+
       return { success: true, user };
     } catch (error) {
       console.error('Login failed:', error);
-      return { 
-        success: false, 
-        error: error.response?.data?.message || 'Login failed' 
+      return {
+        success: false,
+        error: error.response?.data?.message || 'Login failed'
       };
     }
   };
