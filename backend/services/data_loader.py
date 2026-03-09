@@ -7,7 +7,7 @@ import os
 import re
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DATA_PATH = os.path.join(BASE_DIR, "data")
+DB_PATH = os.path.join(BASE_DIR, "transparent_procure.db")
 
 
 def clean_numerical_value(value):
