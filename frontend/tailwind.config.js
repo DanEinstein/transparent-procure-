@@ -14,9 +14,13 @@ export default {
                 "primary": "#f2cc0d",
                 "background-light": "#f8f8f5",
                 "background-dark": "#0a0c10",
+                "surface-dark": "#141820",
+                "border-dark": "#1e2330",
                 "navy-deep": "#111827",
                 "navy-darker": "#030712",
                 "navy-muted": "#1f2937",
+                "danger": "#ef4444",
+                "accent-gold": "#f59e0b",
             },
             fontFamily: {
                 "display": ["Inter", "sans-serif"]

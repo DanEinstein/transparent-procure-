@@ -16,7 +16,9 @@
       "verified": true
     },
     "timestamp": "2026-02-26T10:00:00Z",
-    "images": ["https://images.unsplash.com/photo-1541888946425-d81bb19240f5"],
+    "images": [
+      "https://images.unsplash.com/photo-1541888946425-d81bb19240f5"
+    ],
     "is_demo_data": true
   },
   {
@@ -36,7 +38,9 @@
       "verified": true
     },
     "timestamp": "2026-02-25T14:30:00Z",
-    "images": ["https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d"],
+    "images": [
+      "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d"
+    ],
     "is_demo_data": true
   },
   {
@@ -56,7 +60,9 @@
       "verified": false
     },
     "timestamp": "2026-02-26T08:15:00Z",
-    "images": ["https://images.unsplash.com/photo-1515162816999-a0c47dc192f7"],
+    "images": [
+      "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7"
+    ],
     "is_demo_data": true
   },
   {
@@ -76,7 +82,97 @@
       "verified": true
     },
     "timestamp": "2026-02-24T11:45:00Z",
-    "images": ["https://images.unsplash.com/photo-1545558014-8692077e9b5c"],
+    "images": [
+      "https://images.pexels.com/photos/5669026/pexels-photo-5669026.jpeg"
+    ],
+    "is_demo_data": true
+  },
+  {
+    "id": "post_105",
+    "title": "Maseno Siriba Road Crisis",
+    "content": "The construction of the road has been completely abondoned and it is causing sufferings to the people in the area",
+    "status": "delay_reported",
+    "wardId": "Maseno Central",
+    "county": "Kisumu West",
+    "category": "Infrastructure",
+    "likes": 210,
+    "comments": 45,
+    "referenceId": "BGS-882",
+    "author": {
+      "name": "June Konuche",
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=June",
+      "verified": true
+    },
+    "timestamp": "2026-02-24T11:45:00Z",
+    "images": [
+      "https://images.pexels.com/photos/5611713/pexels-photo-5611713.jpeg"
+    ],
+    "is_demo_data": true
+  },
+  {
+    "id": "post_106",
+    "title": "Kisumu Road Construction",
+    "content": "The construction of the road has been completely abondoned and it is causing sufferings to the people in the area",
+    "status": "delay_reported",
+    "wardId": "Kisumu Central",
+    "county": "Kisumu West",
+    "category": "Infrastructure",
+    "likes": 210,
+    "comments": 45,
+    "referenceId": "BGS-882",
+    "author": {
+      "name": "Geddy Wendot",
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Cyrus",
+      "verified": true
+    },
+    "timestamp": "2026-02-24T11:45:00Z",
+    "images": [
+      "https://images.pexels.com/photos/26953860/pexels-photo-26953860.jpeg"
+    ],
+    "is_demo_data": true
+  },
+  {
+    "id": "post_107",
+    "title": "Kitale Road Construction",
+    "content": "The construction of the road has been completely abondoned and it is causing sufferings to the people in the area",
+    "status": "delay_reported",
+    "wardId": "Kitale Central",
+    "county": "Kitale",
+    "category": "Infrastructure",
+    "likes": 70,
+    "comments": 15,
+    "referenceId": "BGS-882",
+    "author": {
+      "name": "Jerome Maunga",
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Cyrus",
+      "verified": true
+    },
+    "timestamp": "2026-02-24T11:45:00Z",
+    "images": [
+      "https://images.pexels.com/photos/4134380/pexels-photo-4134380.jpeg"
+    ],
+    "is_demo_data": true
+  },
+  {
+    "id": "post_108",
+    "title": "Nyawita Market Construction",
+    "content": "The construction of the market is so smooth. Kudos to the contractor",
+    "status": "on_schedule",
+    "wardId": "Kitale Central",
+    "county": "Kitale",
+    "category": "Infrastructure",
+    "likes": 120,
+    "comments": 15,
+    "referenceId": "BGS-882",
+    "author": {
+      "name": "Danson Githuka",
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Cyrus",
+      "verified": true
+    },
+    "timestamp": "2026-02-24T11:45:00Z",
+    "images": [
+      "https://images.pexels.com/photos/7931/pexels-photo-7931.jpg"
+    ],
     "is_demo_data": true
   }
 ]
