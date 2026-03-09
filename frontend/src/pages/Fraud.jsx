@@ -24,59 +24,59 @@ export default function Fraud() {
     };
 
     return (
-        <div className="flex-1 overflow-y-auto p-8 space-y-8 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto p-8 space-y-8 custom-scrollbar bg-navy-deep text-slate-100">
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-4">
-                    <h2 className="text-lg font-bold text-slate-900 dark:text-white">Forensic Intelligence Dashboard</h2>
+                    <h2 className="text-lg font-bold text-white">Forensic Intelligence Dashboard</h2>
                     <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-danger/20 text-danger border border-danger/30">LIVE OVERSIGHT</span>
                 </div>
             </div>
 
             {/* Stats Ribbon — derived from backend data */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-800 p-5 rounded-xl shadow-sm">
+                <div className="bg-navy-muted border border-slate-700 p-5 rounded-xl shadow-sm">
                     <div className="flex items-center justify-between mb-3">
-                        <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Total Alerts</p>
+                        <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Alerts</p>
                         <span className="material-symbols-outlined text-primary">search_insights</span>
                     </div>
-                    <h3 className="text-2xl font-bold dark:text-white">{alerts.length}</h3>
-                    <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-1">All severity levels</p>
+                    <h3 className="text-2xl font-bold text-white">{alerts.length}</h3>
+                    <p className="text-[10px] text-slate-400 mt-1">All severity levels</p>
                 </div>
-                <div className="bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-800 p-5 rounded-xl shadow-sm">
+                <div className="bg-navy-muted border border-slate-700 p-5 rounded-xl shadow-sm">
                     <div className="flex items-center justify-between mb-3">
                         <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Open Alerts</p>
                         <span className="material-symbols-outlined text-danger">warning</span>
                     </div>
                     <h3 className="text-2xl font-bold text-danger">{alerts.filter(a => a.status === 'open').length}</h3>
-                    <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-1">Require action</p>
+                    <p className="text-[10px] text-slate-400 mt-1">Require action</p>
                 </div>
-                <div className="bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-800 p-5 rounded-xl shadow-sm">
+                <div className="bg-navy-muted border border-slate-700 p-5 rounded-xl shadow-sm">
                     <div className="flex items-center justify-between mb-3">
                         <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Investigating</p>
                         <span className="material-symbols-outlined text-blue-500">manage_search</span>
                     </div>
                     <h3 className="text-2xl font-bold text-blue-500">{alerts.filter(a => a.status === 'investigating').length}</h3>
-                    <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-1">Active investigations</p>
+                    <p className="text-[10px] text-slate-400 mt-1">Active investigations</p>
                 </div>
-                <div className="bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-800 p-5 rounded-xl shadow-sm">
+                <div className="bg-navy-muted border border-slate-700 p-5 rounded-xl shadow-sm">
                     <div className="flex items-center justify-between mb-3">
                         <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Resolved</p>
                         <span className="material-symbols-outlined text-emerald-500">check_circle</span>
                     </div>
                     <h3 className="text-2xl font-bold text-emerald-500">{alerts.filter(a => a.status === 'resolved').length}</h3>
-                    <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-1">Successfully closed</p>
+                    <p className="text-[10px] text-slate-400 mt-1">Successfully closed</p>
                 </div>
             </div>
 
             {/* Alerts Table */}
-            <div className="bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
-                <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-800">
-                    <h3 className="text-xl font-bold dark:text-white">Fraud Alerts</h3>
+            <div className="bg-navy-muted border border-slate-700 rounded-xl overflow-hidden">
+                <div className="px-6 py-4 border-b border-slate-700">
+                    <h3 className="text-xl font-bold text-white">Fraud Alerts</h3>
                 </div>
                 <table className="w-full text-left border-collapse">
                     <thead>
-                        <tr className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
+                        <tr className="bg-slate-800/50 border-b border-slate-700">
                             <th className="px-4 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Alert</th>
                             <th className="px-4 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Severity</th>
                             <th className="px-4 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Status</th>
@@ -85,7 +85,7 @@ export default function Fraud() {
                             <th className="px-4 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Assigned To</th>
                         </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                    <tbody className="divide-y divide-slate-700">
                         {loading ? (
                             <tr>
                                 <td colSpan="6" className="text-center py-20 text-slate-500">
@@ -104,9 +104,9 @@ export default function Fraud() {
                                 <td colSpan="6" className="text-center py-20 text-slate-500">No alerts found.</td>
                             </tr>
                         ) : alerts.map((alert) => (
-                            <tr key={alert.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors cursor-pointer">
+                            <tr key={alert.id} className="hover:bg-slate-800/30 transition-colors cursor-pointer">
                                 <td className="px-4 py-4 max-w-xs">
-                                    <p className="text-xs font-bold dark:text-white">{alert.title}</p>
+                                    <p className="text-xs font-bold text-white">{alert.title}</p>
                                     <p className="text-[10px] text-slate-500 mt-1 line-clamp-2">{alert.description}</p>
                                 </td>
                                 <td className="px-4 py-4">
@@ -140,7 +140,7 @@ export default function Fraud() {
                     </tbody>
                 </table>
                 {alerts.length > 0 && (
-                    <div className="p-4 border-t border-slate-100 dark:border-slate-800">
+                    <div className="p-4 border-t border-slate-700">
                         <p className="text-[10px] text-slate-500">Showing {alerts.length} alert{alerts.length !== 1 ? 's' : ''}</p>
                     </div>
                 )}
@@ -149,11 +149,11 @@ export default function Fraud() {
             {/* Footer Action Bar */}
             <div className="bg-primary/5 dark:bg-primary/10 border border-primary/20 p-6 rounded-xl flex items-center justify-between">
                 <div>
-                    <p className="text-xs font-bold dark:text-white">Forensic Review</p>
+                    <p className="text-xs font-bold text-white">Forensic Review</p>
                     <p className="text-[10px] text-slate-500">Senior auditors monitoring {alerts.filter(a => a.status !== 'resolved').length} open case{alerts.filter(a => a.status !== 'resolved').length !== 1 ? 's' : ''}.</p>
                 </div>
                 <div className="flex gap-4">
-                    <button className="px-5 py-2.5 rounded-lg text-sm font-bold border border-slate-200 dark:border-slate-700 hover:bg-white dark:hover:bg-slate-800 transition-colors">Save Session</button>
+                    <button className="px-5 py-2.5 rounded-lg text-sm font-bold border border-slate-700 hover:bg-slate-800 transition-colors">Save Session</button>
                     <button className="px-6 py-2.5 rounded-lg text-sm font-bold bg-primary text-white shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all">Submit Forensic Case</button>
                 </div>
             </div>

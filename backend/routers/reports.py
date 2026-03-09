@@ -58,6 +58,8 @@ async def get_report_templates():
             {"id": "tpl_001", "name": "Blacklist Summary", "type": "summary", "category": "blacklist"},
             {"id": "tpl_002", "name": "Fraud Monthly", "type": "monthly", "category": "fraud"},
             {"id": "tpl_003", "name": "Compliance Annual", "type": "annual", "category": "compliance"},
+            {"id": "tpl_004", "name": "Compliance Monthly", "type": "monthly", "category": "compliance"},
+            {"id": "tpl_005", "name": "Compliance Quarterly", "type": "quarterly", "category": "compliance"},
         ],
         message="Report templates retrieved",
     )

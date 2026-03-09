@@ -82,6 +82,58 @@
             "complianceRating": 35,
             "lastProject": "County Fleet Management",
             "status": "flagged"
+        },
+        {
+            "id": "contr_005",
+            "name": "Kisumu Logistics Ltd",
+            "licenseNumber": "NCA-E5",
+            "score": 28,
+            "category": "Transport",
+            "region": "Kisumu",
+            "projectsCompleted": 4,
+            "avgCompletionTime": "7 months",
+            "complianceRating": 4,
+            "lastProject": "County Fleet Management",
+            "status": "flagged"
+        },
+        {
+            "id": "contr_006",
+            "name": "Nakuru Logistics Ltd",
+            "licenseNumber": "NCA-Q3",
+            "score": 2,
+            "category": "Transport",
+            "region": "Nakuru",
+            "projectsCompleted": 4,
+            "avgCompletionTime": "7 months",
+            "complianceRating": 4,
+            "lastProject": "County Fleet Management",
+            "status": "flagged"
+        },
+        {
+            "id": "contr_007",
+            "name": "Busia Logistics Ltd",
+            "licenseNumber": "NCA-Q4",
+            "score": 2,
+            "category": "Transport",
+            "region": "Busia",
+            "projectsCompleted": 4,
+            "avgCompletionTime": "7 months",
+            "complianceRating": 4,
+            "lastProject": "County Fleet Management",
+            "status": "flagged"
+        },
+        {
+            "id": "contr_008",
+            "name": "Luanda Logistics Ltd",
+            "licenseNumber": "NCA-Q5",
+            "score": 2,
+            "category": "Transport",
+            "region": "Luanda",
+            "projectsCompleted": 4,
+            "avgCompletionTime": "7 months",
+            "complianceRating": 50,
+            "lastProject": "County Fleet Management",
+            "status": "under_review"
         }
     ],
     "priceAnomalies": [
